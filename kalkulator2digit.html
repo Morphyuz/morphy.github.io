@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PokéCalc 7-Segment v1.5 ☆ﾟ.*･｡ﾟ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+    <style>
+         :root {
+            --poke-red: #dc0d1e;
+            --poke-red-dark: #a10714;
+            --win-blue: #2a75d3;
+            --win-title: linear-gradient(90deg, #dc0d1e, #ff4d4d);
+            --win-bg: #f0f0f0;
+            --border-light: #ffffff;
+            --border-dark: #a4a4a4;
+            --border-darker: #232323;
+            --hot-pink: #ffde00;
+            /* Pikachu Yellow untuk segmen aktif */
+            --cyan: #30a7d7;
+            /* Water Type Blue */
+            --lime: #4dad5b;
+            /* Grass Type Green */
+            --screen-bg: #1c2426;
+            /* Sleek Slate Pokedex Screen */
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            /* Gradient shifting bertema Kanto & Johto classic colors */
+            background: linear-gradient( 135deg, #ff7f7f 0%, #ffeb7f 50%, #7fbfff 100);
+            background-size: 200% 200%;
+            animation: bgShift 15s ease infinite;
+            font-family: "Verdana", Tahoma, sans-serif;
+            color: #232323;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        @keyframes bgShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        /* ── LAYOUT ── */
+        
+        .page {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 900px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* ── POKEDEX PANEL STYLE ── */
+        
+        .panel {
+            background: var(--win-bg);
+            border: 2px solid var(--border-darker);
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            padding: 2px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .panel-content {
+            padding: 15px;
+            background: #fff;
+        }
+        
+        .window-title {
+            background: var(--win-title);
+            color: white;
+            font-family: "Tahoma", sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-darker);
+        }
+        
+        .window-btns {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .win-btn {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 1px solid var(--border-darker);
+            border-radius: 3px;
+            font-size: 9px;
+            line-height: 14px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #000;
+        }
+        /* ── POKEDEX HARDWARE CASING ── */
+        
+        .calc-device {
+            background: linear-gradient(145deg, var(--poke-red), var(--poke-red-dark));
+            border-radius: 30px;
+            border: 4px solid var(--border-darker);
+            box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.4), inset -4px -4px 12px rgba(0, 0, 0, 0.4), inset 4px 4px 12px rgba(255, 255, 255, 0.3);
+            padding: 30px 22px;
+            position: sticky;
+            top: 20px;
+        }
+        /* Dekorasi Lampu Khas Pokédex */
+        
+        .pokedex-lights {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+        
+        .big-blue-light {
+            width: 36px;
+            height: 36px;
+            background: radial-gradient(circle, #7fe5ff 0%, #00a2ff 70%, #0055b3 100%);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00a2ff, 2px 2px 5px rgba(0, 0, 0, 0.4);
+        }
+        
+        .mini-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #000;
+        }
+        
+        .light-red {
+            background: #ff3333;
+            box-shadow: 0 0 4px #ff3333;
+        }
+        
+        .light-yellow {
+            background: #ffcc00;
+            box-shadow: 0 0 4px #ffcc00;
+        }
+        
+        .light-green {
+            background: #33cc33;
+            box-shadow: 0 0 4px #33cc33;
+        }
+        
+        .brand-logo {
+            font-family: "Impact", sans-serif;
+            font-size: 22px;
+            color: #ffde00;
+            text-shadow: 2px 2px 0px var(--win-blue), -1px -1px 0px var(--win-blue), 1px -1px 0px var(--win-blue), -1px 1px 0px var(--win-blue);
+            text-align: right;
+            margin-top: -45px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        /* ── SCREEN ── */
+        
+        .display-panel {
+            background: var(--screen-bg);
+            border: 4px solid #555;
+            border-radius: 12px;
+            padding: 18px 15px;
+            margin-bottom: 22px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .display-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient( 0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .expression-bar {
+            font-family: "VT323", monospace;
+            font-size: 22px;
+            color: var(--cyan);
+            text-align: right;
+            min-height: 22px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 6px var(--cyan);
+        }
+        
+        .seven-seg-display {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            min-height: 72px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .seg-digit-container {
+            width: 36px;
+            height: 68px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .seg-digit-container.minus {
+            width: 20px;
+        }
+        
+        .seg-digit-container.dot-container {
+            width: 10px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 4px;
+        }
+        
+        .decimal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--hot-pink);
+            box-shadow: 0 0 10px var(--hot-pink);
+        }
+        
+        .seg {
+            transition: fill 0.1s;
+        }
+        
+        .seg.on {
+            fill: var(--hot-pink);
+            filter: drop-shadow(0 0 6px var(--hot-pink));
+        }
+        
+        .seg.off {
+            fill: #2d383b;
+            /* Segmen mati berbaur dengan warna layar baru */
+        }
+        /* ── POKEBALL STYLE BUTTONS ── */
+        
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            background: #232323;
+            /* Dark pad accent */
+            padding: 15px;
+            border-radius: 18px;
+            box-shadow: inset 0px 5px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .calc-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
+            border: 2px solid var(--border-darker);
+            border-radius: 50px;
+            /* Rounded Buttons */
+            color: #232323;
+            font-family: "Arial Black", sans-serif;
+            font-size: 18px;
+            padding: 12px 0;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #888;
+            transition: all 0.05s;
+        }
+        
+        .calc-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #888;
+        }
+        /* Operator Motif Pikachu Yellow */
+        
+        .calc-btn.op {
+            background: linear-gradient(180deg, #ffde00 0%, #ffb300 100%);
+            color: #232323;
+            box-shadow: 0 4px 0 #b37d00;
+        }
+        
+        .calc-btn.fn {
+            font-size: 14px;
+            font-family: "Verdana";
+            font-weight: bold;
+            background: linear-gradient(180deg, #b0bec5 0%, #78909c 100%);
+            color: white;
+            box-shadow: 0 4px 0 #455a64;
+        }
+        /* Clear Motif Pokéball Red */
+        
+        .calc-btn.clear {
+            background: linear-gradient(180deg, #ff4d4d 0%, #cc0000 100%);
+            color: #fff;
+            grid-column: span 2;
+            box-shadow: 0 4px 0 #7a0000;
+        }
+        /* Enter Motif Great Ball Blue */
+        
+        .calc-btn.eq {
+            background: linear-gradient(180deg, #30a7d7 0%, #1b53ba 100%);
+            color: #fff;
+            grid-column: span 2;
+            box-shadow: 0 4px 0 #0d3273;
+        }
+        /* ── TELEMETRY / RIGHT SIDE ── */
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .step-box {
+            background: #fdfefe;
+            border: 1px solid var(--border-dark);
+            border-left: 4px solid var(--win-blue);
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        
+        .step-label {
+            font-weight: bold;
+            color: var(--win-blue);
+            margin-bottom: 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .txt-pink {
+            color: #e3350d;
+            /* Pokémon Red text accent */
+            font-weight: bold;
+        }
+        
+        .txt-cyan {
+            color: #0d7cb5;
+            font-weight: bold;
+        }
+        
+        .txt-red {
+            color: #dc0d1e;
+            font-weight: bold;
+        }
+        /* Binary Blocks */
+        
+        .bin-row {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        
+        .bin-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .bin-bit {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "VT323", monospace;
+            font-size: 18px;
+            background: #f5f5f5;
+            border: 1px solid var(--border-dark);
+            border-radius: 4px;
+        }
+        
+        .bin-bit.b1 {
+            background: #ffde00;
+            color: #232323;
+            font-weight: bold;
+            border-color: #b37d00;
+        }
+        
+        .bin-bit.b0 {
+            color: #bbb;
+        }
+        
+        .bin-label {
+            font-size: 9px;
+            color: #777;
+        }
+        /* Truth Table */
+        
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            background: #fff;
+        }
+        
+        .truth-table th {
+            background: #232323;
+            color: #fff;
+            padding: 6px;
+            font-weight: normal;
+            border: 1px solid #444;
+        }
+        
+        .truth-table td {
+            padding: 5px 6px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .truth-table .active-row {
+            background: #fff9c4;
+            /* Soft yellow highlight */
+        }
+        
+        .truth-table .active-row td:first-child {
+            color: #dc0d1e;
+            font-weight: bold;
+        }
+        
+        .bit-high {
+            color: #4dad5b;
+            font-weight: bold;
+        }
+        /* Small Diagram */
+        
+        .seg-mini-wrap {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: #fafafa;
+            padding: 10px;
+            border: 1px dashed var(--border-dark);
+            border-radius: 6px;
+        }
+        
+        .seg-mini-group {
+            text-align: center;
+        }
+        
+        .seg-mini-code {
+            font-family: "VT323", monospace;
+            font-size: 14px;
+            color: var(--win-blue);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div>
+            <div class="calc-device">
+                <div class="pokedex-lights">
+                    <div class="big-blue-light"></div>
+                    <div class="mini-light light-red"></div>
+                    <div class="mini-light light-yellow"></div>
+                    <div class="mini-light light-green"></div>
+                </div>
+
+                <div class="brand-logo">PokéCalc v1.5</div>
+
+                <div class="display-panel">
+                    <div class="expression-bar" id="expression-bar">0</div>
+                    <div class="seven-seg-display" id="seg-display"></div>
+                    <marquee scrollamount="3" style="
+                position: absolute;
+                bottom: 2px;
+                left: 10px;
+                width: 90%;
+                font-family: 'VT323', monospace;
+                font-size: 14px;
+                color: var(--lime);
+                text-shadow: 0 0 3px var(--lime);
+              ">
+                        ★ POKÉDEX SYSTEM ONLINE ☆ READY TO COMPUTE ★ CATCH 'EM ALL! ☆ BEEP BOOP... ★
+                    </marquee>
+                </div>
+
+                <div class="btn-grid">
+                    <button class="calc-btn clear" onclick="calcFn('AC')">AC</button>
+                    <button class="calc-btn fn" onclick="calcFn('DEL')">DEL</button>
+                    <button class="calc-btn op" onclick="calcFn('/')">÷</button>
+
+                    <button class="calc-btn" onclick="calcFn('7')">7</button>
+                    <button class="calc-btn" onclick="calcFn('8')">8</button>
+                    <button class="calc-btn" onclick="calcFn('9')">9</button>
+                    <button class="calc-btn op" onclick="calcFn('*')">×</button>
+
+                    <button class="calc-btn" onclick="calcFn('4')">4</button>
+                    <button class="calc-btn" onclick="calcFn('5')">5</button>
+                    <button class="calc-btn" onclick="calcFn('6')">6</button>
+                    <button class="calc-btn op" onclick="calcFn('-')">−</button>
+
+                    <button class="calc-btn" onclick="calcFn('1')">1</button>
+                    <button class="calc-btn" onclick="calcFn('2')">2</button>
+                    <button class="calc-btn" onclick="calcFn('3')">3</button>
+                    <button class="calc-btn op" onclick="calcFn('+')">+</button>
+
+                    <button class="calc-btn fn" onclick="calcFn('%')">%</button>
+                    <button class="calc-btn" onclick="calcFn('0')">0</button>
+                    <button class="calc-btn fn" onclick="calcFn('.')">.</button>
+                    <button class="calc-btn eq" onclick="calcFn('=')">ENTER</button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel">
+                <div class="window-title">
+                    <span>
+              <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                width="12"
+                height="12"
+                style="
+                  background: #ffde00;
+                  border: 1px solid #fff;
+                  margin-right: 5px;
+                  display: inline-block;
+                "
+              />
+              RotomOS://Battle_Simulator/LogicTrace.exe</span
+            >
+            <div class="window-btns">
+              <div class="win-btn">_</div>
+              <div class="win-btn">□</div>
+              <div class="win-btn">X</div>
+            </div>
+          </div>
+          <div class="panel-content">
+            <div class="step-flow" id="step-flow"></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="window-title">
+              <span>Effort_Values_Dump.bin</span>
+                    <div class="window-btns">
+                        <div class="win-btn">_</div>
+                        <div class="win-btn">□</div>
+                        <div class="win-btn">X</div>
+                    </div>
+                </div>
+                <div class="panel-content" id="bin-panel"></div>
+            </div>
+            <div class="panel">
+                <div class="window-title">
+                    <span>Pokedex_Display_Buffer.scr</span>
+                    <div class="window-btns">
+                        <div class="win-btn">_</div>
+                        <div class="win-btn">□</div>
+                        <div class="win-btn">X</div>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="seg-mini-wrap" id="seg-diagram"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="window-title">
+                <span>Type_Effectiveness_Decoder.dll</span>
+                <div class="window-btns">
+                    <div class="win-btn">_</div>
+                    <div class="win-btn">□</div>
+                    <div class="win-btn">X</div>
+                </div>
+            </div>
+            <div class="panel-content" id="truth-panel"></div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        //  SEVEN SEGMENT DATA
+        // ═══════════════════════════════════════════════════════════
+        const SEG_MAP = {
+            0: [1, 1, 1, 1, 1, 1, 0],
+            1: [0, 1, 1, 0, 0, 0, 0],
+            2: [1, 1, 0, 1, 1, 0, 1],
+            3: [1, 1, 1, 1, 0, 0, 1],
+            4: [0, 1, 1, 0, 0, 1, 1],
+            5: [1, 0, 1, 1, 0, 1, 1],
+            6: [1, 0, 1, 1, 1, 1, 1],
+            7: [1, 1, 1, 0, 0, 0, 0],
+            8: [1, 1, 1, 1, 1, 1, 1],
+            9: [1, 1, 1, 1, 0, 1, 1],
+            "-": [0, 0, 0, 0, 0, 0, 1],
+            E: [1, 0, 0, 1, 1, 1, 1],
+            r: [0, 0, 0, 0, 1, 0, 1],
+            " ": [0, 0, 0, 0, 0, 0, 0],
+        }
+        const SEG_NAMES = ["A", "B", "C", "D", "E", "F", "G"]
+
+        // ═══════════════════════════════════════════════════════════
+        //  STATE
+        // ═══════════════════════════════════════════════════════════
+        let currentVal = "0",
+            prevVal = "",
+            operator = null
+        let waitingForOperand = false,
+            expression = ""
+        let hasDecimal = false,
+            justCalc = false,
+            errMode = false
+
+        // ═══════════════════════════════════════════════════════════
+        //  SVG GENERATORS
+        // ═══════════════════════════════════════════════════════════
+        function createDigitSVG(char) {
+            const segs = SEG_MAP[char] || SEG_MAP[" "]
+            const w = 36,
+                h = 68,
+                sw = 4,
+                sg = 2,
+                pad = 3
+            const topY = pad,
+                midY = h / 2 - sw / 2,
+                botY = h - pad - sw
+            const lX = pad,
+                rX = w - pad - sw
+            const tx1 = pad + sw + sg,
+                tx2 = w - pad - sw - sg
+
+            function cls(on) {
+                return on ? "seg on" : "seg off"
+            }
+            let svg = `<svg class="digit-svg" viewBox="0 0 36 68" xmlns="http://www.w3.org/2000/svg">
+    <path class="${cls(segs[0])}" d="M${tx1} ${topY} L${tx2} ${topY} L${tx2 - sg} ${topY + sw} L${tx1 + sg} ${topY + sw} Z"/>
+    <path class="${cls(segs[1])}" d="M${rX} ${topY + sw + sg} L${rX + sw} ${topY + sg} L${rX + sw} ${midY - sg} L${rX} ${midY - sg * 2} Z"/>
+    <path class="${cls(segs[2])}" d="M${rX} ${midY + sw + sg} L${rX + sw} ${midY + sw + sg * 2} L${rX + sw} ${botY - sg} L${rX} ${botY - sg} Z"/>
+    <path class="${cls(segs[3])}" d="M${tx1} ${botY + sw} L${tx2} ${botY + sw} L${tx2 - sg} ${botY} L${tx1 + sg} ${botY} Z"/>
+    <path class="${cls(segs[4])}" d="M${lX} ${midY + sw + sg} L${lX + sw} ${midY + sw + sg * 2} L${lX + sw} ${botY - sg} L${lX} ${botY - sg} Z"/>
+    <path class="${cls(segs[5])}" d="M${lX} ${topY + sw + sg} L${lX + sw} ${topY + sg} L${lX + sw} ${midY - sg} L${lX} ${midY - sg * 2} Z"/>
+    <path class="${cls(segs[6])}" d="M${tx1} ${midY} L${tx2} ${midY} L${tx2 - sg} ${midY + sw} L${tx1 + sg} ${midY + sw} Z"/>
+  </svg>`
+            return {
+                svg
+            }
+        }
+
+        function segSVGsmall(char, size) {
+            const s = SEG_MAP[char] || [0, 0, 0, 0, 0, 0, 0]
+            const w = size,
+                h = size * 1.9
+            const sw = size * 0.12,
+                sg = size * 0.06,
+                pad = size * 0.1
+            const topY = pad,
+                midY = h / 2 - sw / 2,
+                botY = h - pad - sw
+            const lX = pad,
+                rX = w - pad - sw
+            const tx1 = pad + sw + sg,
+                tx2 = w - pad - sw - sg
+
+            const on = "#dc0d1e",
+                /* Sinkron dengan Poke Red untuk sub-diagram */
+                off = "#e6e6e6"
+
+            function f(b) {
+                return b ? `fill="${on}"` : `fill="${off}"`
+            }
+            return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <path ${f(s[0])} d="M${tx1} ${topY} L${tx2} ${topY} L${tx2 - sg} ${topY + sw} L${tx1 + sg} ${topY + sw} Z"/>
+    <path ${f(s[1])} d="M${rX} ${topY + sw + sg} L${rX + sw} ${topY + sg} L${rX + sw} ${midY - sg} L${rX} ${midY - sg * 2} Z"/>
+    <path ${f(s[2])} d="M${rX} ${midY + sw + sg} L${rX + sw} ${midY + sw + sg * 2} L${rX + sw} ${botY - sg} L${rX} ${botY - sg} Z"/>
+    <path ${f(s[3])} d="M${tx1} ${botY + sw} L${tx2} ${botY + sw} L${tx2 - sg} ${botY} L${tx1 + sg} ${botY} Z"/>
+    <path ${f(s[4])} d="M${lX} ${midY + sw + sg} L${lX + sw} ${midY + sw + sg * 2} L${lX + sw} ${botY - sg} L${lX} ${botY - sg} Z"/>
+    <path ${f(s[5])} d="M${lX} ${topY + sw + sg} L${lX + sw} ${topY + sg} L${lX + sw} ${midY - sg} L${lX} ${midY - sg * 2} Z"/>
+    <path ${f(s[6])} d="M${tx1} ${midY} L${tx2} ${midY} L${tx2 - sg} ${midY + sw} L${tx1 + sg} ${midY + sw} Z"/>
+  </svg>`
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        //  RENDER UI
+        // ═══════════════════════════════════════════════════════════
+        function renderDisplay(value) {
+            const container = document.getElementById("seg-display")
+            const exprBar = document.getElementById("expression-bar")
+
+            let displayStr = value.toString()
+            if (displayStr === "Infinity" || displayStr === "-Infinity")
+                displayStr = "Err"
+            if (
+                isNaN(parseFloat(displayStr)) &&
+                !["Err", "-"].includes(displayStr)
+            ) {
+                if (!/^-?[\d.]+$/.test(displayStr)) displayStr = "Err"
+            }
+            exprBar.textContent = expression || displayStr
+
+            let digits =
+                displayStr === "Err" ? ["E", "r", "r"] : displayStr.split("")
+            digits = digits.slice(-9)
+
+            container.innerHTML = ""
+            digits.forEach((ch) => {
+                if (ch === ".") {
+                    container.innerHTML += `<div class="seg-digit-container dot-container"><div class="decimal-dot"></div></div>`
+                } else {
+                    const dc = document.createElement("div")
+                    dc.className = "seg-digit-container" + (ch === "-" ? " minus" : "")
+                    dc.innerHTML = createDigitSVG(ch).svg
+                    container.appendChild(dc)
+                }
+            })
+        }
+
+        function renderSteps(a, b, op, rStr) {
+            if (a === null) {
+                document.getElementById("step-flow").innerHTML = `
+      <div class="step-box">
+        <div class="step-label">SYSTEM IDLE</div>
+        <div>Waiting for input... <span class="txt-pink">${rStr}</span></div>
+      </div>`
+                return
+            }
+
+            const result = rStr === "Err" ? NaN : parseFloat(rStr)
+            let steps = []
+
+            steps.push({
+                label: "VAR INITIALIZATION",
+                content: `A = <span class="txt-cyan">${a}</span> | B = <span class="txt-cyan">${b}</span>`,
+                detail: `Operator Matrix: [ ${op} ]`,
+            })
+
+            if (op === "+" || op === "-") {
+                const binA = decToBin(Math.abs(a), 8),
+                    binB = decToBin(Math.abs(b), 8)
+                steps.push({
+                    label: "ALU: BINARY TRANSLATION",
+                    content: `A -> 0b${binA}<br>B -> 0b${binB}`,
+                })
+            } else if (op === "*") {
+                steps.push({
+                    label: "ALU: MULTIPLIER",
+                    content: `Calculating Product...`,
+                })
+            } else if (op === "/") {
+                steps.push({
+                    label: b === 0 ? "ALU: EXCEPTION" : "ALU: DIVISION",
+                    content: b === 0 ?
+                        `<span class="txt-red">FATAL: DIV/0</span>` : `${a} / ${b} = <span class="txt-pink">${rStr}</span>`,
+                })
+            }
+
+            steps.push({
+                label: "OUTPUT SIGNAL",
+                content: `RESULT => <span class="txt-pink" style="font-size:16px">${rStr}</span>`,
+            })
+
+            document.getElementById("step-flow").innerHTML = steps
+                .map(
+                    (s) => `
+    <div class="step-box">
+      <div class="step-label">${s.label}</div>
+      <div>${s.content}</div>
+      ${s.detail ? `<div style="font-size:10px; color:#666; margin-top:4px">${s.detail}</div>` : ""}
+    </div>
+  `,
+          )
+          .join("")
+      }
+
+      function decToBin(n, bits) {
+        let b = Math.abs(Math.round(n)).toString(2)
+        while (b.length < bits) b = "0" + b
+        return b
+      }
+
+      function renderBinary(a, b, rStr) {
+        const nums = []
+        if (a !== null) nums.push({ label: "REG_A", val: a })
+        if (b !== null) nums.push({ label: "REG_B", val: b })
+        if (rStr !== "Err" && rStr !== null)
+          nums.push({ label: "REG_OUT", val: parseFloat(rStr) })
+
+        let html = nums
+          .filter((n) => Number.isInteger(n.val))
+          .map((n) => {
+            const bits = decToBin(n.val, 8)
+            return `<div style="margin-bottom:12px; background:#fff; border:1px solid #808080; padding:6px;">
+      <div class="step-label">${n.label} <span class="txt-cyan">[${n.val}]</span></div>
+      <div class="bin-row">
+        ${bits
+          .split("")
+          .map(
+            (b, i) => `
+          <div class="bin-cell">
+            <div class="bin-bit ${b === "1" ? "b1" : "b0"}">${b}</div>
+            <div class="bin-label">b${7 - i}</div>
+          </div>`,
+          )
+          .join("")}
+      </div>
+    </div>`
+          })
+          .join("")
+
+        document.getElementById("bin-panel").innerHTML =
+          html || "<div>NO DATA</div>"
+      }
+
+      function renderTruth(rStr) {
+        const activeChars = rStr.split("").filter((c) => SEG_MAP[c])
+        const rows = Object.entries(SEG_MAP).filter(
+          ([d]) => !["E", "r", " "].includes(d),
+        )
+
+        let html = `<table class="truth-table">
+    <thead><tr>
+      <th>CHAR</th>
+      ${SEG_NAMES.map((n) => `<th>${n}</th>`).join("")}
+      <th>HEX</th>
+    </tr></thead><tbody>`
+
+        rows.forEach(([d, s]) => {
+          const active = activeChars.includes(d)
+          const hex = parseInt(s.join(""), 2)
+            .toString(16)
+            .toUpperCase()
+            .padStart(2, "0")
+          html += `<tr class="${active ? "active-row" : ""}">
+      <td style="font-family:'VT323',monospace; font-size:16px;">${d}</td>
+      ${s.map((b) => `<td class="${b ? "bit-high" : "bit-low"}">${b}</td>`).join("")}
+      <td style="color:#000080">0x${hex}</td>
+    </tr>`
+        })
+        html += "</tbody></table>"
+        document.getElementById("truth-panel").innerHTML = html
+      }
+
+      function renderSegDiagram(rStr) {
+        const chars = rStr.split("").filter((c) => SEG_MAP[c])
+        let html = chars
+          .map(
+            (c) => `
+    <div class="seg-mini-group">
+      ${segSVGsmall(c, 30)}
+      <div class="seg-mini-code">${SEG_MAP[c].join("")}</div>
+    </div>
+  `,
+          )
+          .join("")
+        document.getElementById("seg-diagram").innerHTML =
+          html || "<div>BUFFER EMPTY</div>"
+      }
+
+      function updateViz(rStr, a, b, op) {
+        renderSteps(a, b, op, rStr)
+        renderBinary(a, b, rStr)
+        renderTruth(rStr)
+        renderSegDiagram(rStr)
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  CALCULATOR LOGIC
+      // ═══════════════════════════════════════════════════════════
+      function calcFn(key) {
+        if (key === "AC") {
+          currentVal = "0"
+          prevVal = ""
+          operator = null
+          waitingForOperand = false
+          expression = ""
+          hasDecimal = false
+          justCalc = false
+          errMode = false
+          renderDisplay("0")
+          updateViz("0", null, null, null)
+          return
+        }
+        if (errMode && key !== "AC") {
+          renderDisplay("Err")
+          return
+        }
+
+        if (key === "DEL") {
+          if (justCalc) {
+            currentVal = "0"
+          } else if (currentVal.length > 1) {
+            if (currentVal.endsWith(".")) hasDecimal = false
+            currentVal = currentVal.slice(0, -1)
+          } else {
+            currentVal = "0"
+            hasDecimal = false
+          }
+          renderDisplay(currentVal)
+          return
+        }
+
+        if (key === "%") {
+          let v = parseFloat(currentVal)
+          if (!isNaN(v)) {
+            currentVal = String(v / 100)
+            hasDecimal = true
+          }
+          renderDisplay(currentVal)
+          return
+        }
+
+        const ops = ["+", "-", "*", "/"]
+        if (ops.includes(key)) {
+          if (operator && !waitingForOperand) {
+            const res = compute(
+              parseFloat(prevVal),
+              parseFloat(currentVal),
+              operator,
+            )
+            if (res === null) {
+              errMode = true
+              renderDisplay("Err")
+              return
+            }
+            currentVal = formatResult(res)
+            prevVal = currentVal
+          } else {
+            prevVal = currentVal
+          }
+          operator = key
+          waitingForOperand = true
+          hasDecimal = false
+          justCalc = false
+          expression = prevVal + " " + key + " "
+          renderDisplay(currentVal)
+          return
+        }
+
+        if (key === "=") {
+          if (operator && prevVal !== "") {
+            const a = parseFloat(prevVal),
+              b = parseFloat(currentVal)
+            const res = compute(a, b, operator)
+            if (res === null) {
+              errMode = true
+              renderDisplay("Err")
+              return
+            }
+            expression = prevVal + " " + operator + " " + currentVal + " ="
+            currentVal = formatResult(res)
+            updateViz(currentVal, a, b, operator)
+            prevVal = ""
+            operator = null
+            waitingForOperand = false
+            hasDecimal = false
+            justCalc = true
+            renderDisplay(currentVal)
+          }
+          return
+        }
+
+        if (key === ".") {
+          if (justCalc) {
+            currentVal = "0"
+            hasDecimal = false
+            justCalc = false
+          }
+          if (!hasDecimal) {
+            currentVal = (waitingForOperand ? "0" : currentVal) + "."
+            hasDecimal = true
+            waitingForOperand = false
+            renderDisplay(currentVal)
+          }
+          return
+        }
+
+        if ("0123456789".includes(key)) {
+          justCalc = false
+          if (waitingForOperand) {
+            currentVal = key
+            waitingForOperand = false
+            hasDecimal = false
+          } else {
+            if (currentVal === "0") currentVal = key
+            else if (currentVal.replace("-", "").replace(".", "").length < 10)
+              currentVal += key
+          }
+          renderDisplay(currentVal)
+          updateViz(currentVal, null, null, null)
+        }
+      }
+
+      function compute(a, b, op) {
+        if (op === "+") return a + b
+        if (op === "-") return a - b
+        if (op === "*") return a * b
+        if (op === "/") return b === 0 ? null : a / b
+      }
+
+      function formatResult(n) {
+        if (!isFinite(n)) return "Err"
+        let s = parseFloat(n.toPrecision(10)).toString()
+        if (s.includes("e") || s.length > 10)
+          s = parseFloat(n.toFixed(6)).toString()
+        return s
+      }
+
+      // ── KEYBOARD SUPPORT ──
+      document.addEventListener("keydown", (e) => {
+        const map = { Enter: "=", Backspace: "DEL", Escape: "AC" }
+        if (e.key in map) {
+          calcFn(map[e.key])
+          e.preventDefault()
+        } else if ("0123456789+-*/.%".includes(e.key)) calcFn(e.key)
+      })
+
+      // INIT
+      renderDisplay("0")
+      updateViz("0", null, null, null)
+    </script>
+</body>
+
+</html>
+
+```
